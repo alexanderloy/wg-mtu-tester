@@ -11,18 +11,6 @@ file=/tmp/wg-mtu-test
 
 datetime=`date +"%d.%m.%Y %T"`
 
-# get current MTU
-MTU=$(< /sys/class/net/$1/mtu)
-
-
-function handle_interrupt {
-    echo "Testing interupted. Exiting..."
-    echo "Setting MTU on $4 back to $MTU"
-    ip link set dev $4 mtu $MTU
-    exit 0
-}
-
-
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]
 then
 
@@ -37,13 +25,31 @@ echo "./mtu-test.sh WGTEST 1200 1500 10.200.50.1 CSV"
 echo "--------------------------------------------------------------------"
 else
 
+# do some tests
+if (( $3 > 1500 )); then
+echo "Stop MTU is to high...."
+exit 0
+fi
+if (( $2 < 1200 )); then
+echo "Start MTU is to low...."
+exit 0
+fi
+
+# get current MTU
+MTU=$(< /sys/class/net/$1/mtu)
+function handle_interrupt {
+    echo "Testing interupted. Exiting..."
+    echo "Setting MTU on $ifname back to $MTU"
+    ip link set dev $ifname mtu $MTU
+    exit 0
+}
 
 min=$2
 max=$3
 ifname=$1
 target=$4
 
-
+echo "Device: $ifname"
 echo "Target Host: $4"
 
 if [ $5 = "CSV" ]; then
@@ -73,7 +79,7 @@ trap handle_interrupt SIGINT
 
 echo "-----------------------"
 echo "MTU: $min"
-ip link set dev $4 mtu $min
+ip link set dev $ifname mtu $min
 output=$( iperf3 -c $4 | grep sender | awk 'END{print $7}' )
 
 
@@ -93,7 +99,7 @@ done
 fi
 
 # done, restore MTU
-ip link set dev $4 mtu $MTU
+ip link set dev $ifname mtu $MTU
 echo "-------------------------------------------------"
 echo "Testing finished!"
 echo "Find your results here: $file"
