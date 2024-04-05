@@ -32,3 +32,34 @@ After Script is finished or gets interrupted it will restore the orginal MTU of 
 Use it your own Risk...
 
 Alexander
+
+
+-------------------------------------------------------------------------------------------
+Here a sample output:
+```
+root@GE:~# ./mtu-test.sh ZH 1200 1500 10.200.40.1 CSV
+Device: ZH
+Target Host: 10.200.40.1
+Filetype is set to: CSV
+Data gets written to: /tmp/wg-mtu-test.csv
+-----------------------
+MTU: 1200
+SPD: 97.0 Mbps
+-----------------------
+MTU: 1201
+SPD: 86.8 Mbps
+-----------------------
+MTU: 1202
+SPD: 95.4 Mbps
+-----------------------
+MTU: 1203
+SPD: 96.3 Mbps
+-----------------------
+MTU: 1204
+SPD: 97.1 Mbps
+-----------------------
+MTU: 1205
+SPD: 95.1 Mbps
+-----------------------
+...
+```
