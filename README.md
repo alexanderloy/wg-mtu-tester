@@ -13,6 +13,9 @@ opkg update
 opkg install bash
 opkg install iperf3
 ```
+```
+Start iperf3 Server on Targethost with iperf3 -s
+```
 
 ```
 Usage:
