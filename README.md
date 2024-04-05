@@ -1,10 +1,10 @@
 ## Script to find best MTU for WG
 
-Because having the best MTU set is a big Gamechanger for WireGuard
-i was searching for a easy Solution to find it. Found some Solutions
-with heatmaps etc. but not what i wanna have.
+Because having the best MTU set is a big gamechanger for WireGuard
+i was searching for a easy solution to find the best MTU. Found some solutions
+with heatmaps etc. and a lot of extras but not what i wanna have.
 
-I just wanna have a simple fast easy to install Solution. Did not found this, so here is it.
+I just wanna have a simple fast easy to use solution. Did not found this, so here is it.
 
 This has been tested on openwrt. Please install first iperf3 and bash package:
 
