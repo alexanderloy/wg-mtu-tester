@@ -3,13 +3,16 @@
 # Find Best MTU for WG
 # By Alexander Loy <alexander.loy@loy.ch>
 #
-# This can take up a long time, let it run overnight :)
 
 
 # File we write output to
-file=/tmp/wg-mtu-test.txt
+
+file=/tmp/wg-mtu-test
 
 datetime=`date +"%d.%m.%Y %T"`
+
+# get current MTU
+MTU=$(< /sys/class/net/$1/mtu)
 
 
 function handle_interrupt {
@@ -27,18 +30,13 @@ echo "mtu-test.sh - Find your best MTU for WG Connection"
 echo "-----------------------"
 echo "Usage:"
 echo "--------------------------------------------------------------------"
-echo "mtu-test.sh <WG IF Name> <start MTU> <stop MTU> <Target WG Server>"
+echo "mtu-test.sh <WG IF Name> <start MTU> <stop MTU> <Target WG Server> <Format CSV/PLAIN>"
 echo
 echo "Example:"
-echo "./mtu-test.sh WGTEST 1200 1500 10.200.50.1"
+echo "./mtu-test.sh WGTEST 1200 1500 10.200.50.1 CSV"
 echo "--------------------------------------------------------------------"
-echo "Output is written to: $file"
-echo "--------------------------------------------------------------------"
-
 else
 
-# get current MTU
-MTU=$(< /sys/class/net/$1/mtu)
 
 min=$2
 max=$3
@@ -46,9 +44,28 @@ ifname=$1
 target=$4
 
 
-echo ""
+echo "Target Host: $4"
+
+if [ $5 = "CSV" ]; then
+
+echo "Filetype is set to: CSV"
+file="$file.csv"
+echo "Data gets written to: $file"
+echo "DateTime; MTU; MBPS;" >> $file
+
+else
+
+file="$file.txt"
+echo "Filetype is set to: PLAIN"
+echo "Data gets written to: $file"
+
 echo "$datetime - Testing..." >> $file
 echo "---------------------------------------" >> $file
+
+fi
+
+
+
 
 while [ $min -le $max ]
 do
@@ -56,9 +73,15 @@ trap handle_interrupt SIGINT
 
 echo "-----------------------"
 echo "MTU: $min"
-#ip link set dev $4 mtu $min
+ip link set dev $4 mtu $min
 output=$( iperf3 -c $4 | grep sender | awk 'END{print $7}' )
+
+
+if [ $5 = "CSV" ]; then
+echo "$datetime;$min;$output" >> $file
+else
 echo "$min - $output" >> $file
+fi
 
 echo "SPD: $output Mbps"
 
