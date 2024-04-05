@@ -23,7 +23,7 @@ echo
 echo "Example:"
 echo "./mtu-test.sh WGTEST 1200 1500 10.200.50.1 CSV"
 echo "--------------------------------------------------------------------"
-exit 0;
+exit 0
 else
 
 # do some tests
